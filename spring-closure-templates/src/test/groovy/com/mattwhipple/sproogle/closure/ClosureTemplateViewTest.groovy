@@ -18,7 +18,7 @@ class ClosureTemplateViewTest extends Specification {
 	ClosureTemplateConfiguration closureTemplateConfigurationTest
 	SoyDataMapper soyDataMapperMock = Mock()
 	NamespacingStrategy namespacingStrategyMock = Mock()
-	SoyTofu soyTofuMock = Mock()
+	Renderer soyTofuRendererMock = Mock()
 	HttpServletResponse responseMock = Mock()
 	HttpServletRequest requestMock = Mock()
 	Writer responseWriterMock = Mock() 
@@ -32,7 +32,7 @@ class ClosureTemplateViewTest extends Specification {
 			namespacingStrategy: namespacingStrategyMock)
 		
 		closureTemplateView.setClosureTemplateConfiguration(closureTemplateConfigurationTest)
-		closureTemplateView.setSoyTofu(soyTofuMock)
+		closureTemplateView.setSoyTofuRenderer(soyTofuRendererMock)
 		
 		responseMock.getWriter() >> responseWriterTest
 	}
@@ -50,17 +50,14 @@ class ClosureTemplateViewTest extends Specification {
 		Map<String, Object> modelTest = [:]
 		SoyMapData soyModel = new SoyMapData()
 		closureTemplateView.setTemplateName("Test")
-		Renderer rendererMock = Mock()
 		
 		when:
 		closureTemplateView.renderMergedTemplateModel(modelTest, requestMock, responseMock)
 		
 		then:
 		1 * soyDataMapperMock.mapObjectMap(modelTest) >> soyModel 
-		1 * namespacingStrategyMock.applyNamespace("Test") >> "newTest"
-		1 * soyTofuMock.newRenderer("newTest") >> rendererMock
-		1 * rendererMock.setData(soyModel) >> rendererMock
-		1 * rendererMock.render() >> "Rendition"
+		1 * soyTofuRendererMock.setData(soyModel) >> soyTofuRendererMock
+		1 * soyTofuRendererMock.render() >> "Rendition"
 		1 * responseWriterMock.write("Rendition", _, _)
 	}
 	
