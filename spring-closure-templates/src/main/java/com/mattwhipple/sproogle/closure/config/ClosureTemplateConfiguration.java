@@ -4,4 +4,5 @@ import javax.annotation.Nonnull;
 
 public interface ClosureTemplateConfiguration {
 	@Nonnull SoyDataMapper getSoyDataMapper();
+	@Nonnull NamespacingStrategy getNamespacingStrategy();
 }

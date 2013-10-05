@@ -21,8 +21,11 @@ public class ClosureTemplateView extends AbstractTemplateView {
 	@Override
 	protected void renderMergedTemplateModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String templateName = this.templateName;
+		if (templateName == null) { throw new IllegalStateException("templateName must be set before rendering"); }
 		SoyMapData soyModel = this.closureTemplateConfiguration.getSoyDataMapper().mapObjectMap(model);
-		String rendition = this.soyTofu.newRenderer(templateName)
+		String namespacedTemplateName = this.closureTemplateConfiguration.getNamespacingStrategy().applyNamespace(templateName);
+		String rendition = this.soyTofu.newRenderer(namespacedTemplateName)
 				.setData(soyModel).render();
 		response.getWriter().write(rendition);
 	}

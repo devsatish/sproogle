@@ -4,16 +4,20 @@ import com.google.template.soy.data.SoyMapData
 import com.google.template.soy.tofu.SoyTofu
 import com.google.template.soy.tofu.SoyTofu.Renderer
 import com.mattwhipple.sproogle.closure.config.ClosureTemplateConfiguration;
+import com.mattwhipple.sproogle.closure.config.NamespacingStrategy;
 import com.mattwhipple.sproogle.closure.config.SoyDataMapper
 import com.mattwhipple.sproogle.closure.config.impl.ClosureTemplateConfigurationImpl
+
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+
 import spock.lang.Specification
 
 class ClosureTemplateViewTest extends Specification {
 
 	ClosureTemplateConfiguration closureTemplateConfigurationTest
 	SoyDataMapper soyDataMapperMock = Mock()
+	NamespacingStrategy namespacingStrategyMock = Mock()
 	SoyTofu soyTofuMock = Mock()
 	HttpServletResponse responseMock = Mock()
 	HttpServletRequest requestMock = Mock()
@@ -24,7 +28,8 @@ class ClosureTemplateViewTest extends Specification {
 	
 	def setup() {
 		closureTemplateConfigurationTest = new ClosureTemplateConfigurationImpl(
-			soyDataMapper: soyDataMapperMock)
+			soyDataMapper: soyDataMapperMock,
+			namespacingStrategy: namespacingStrategyMock)
 		
 		closureTemplateView.setClosureTemplateConfiguration(closureTemplateConfigurationTest)
 		closureTemplateView.setSoyTofu(soyTofuMock)
@@ -40,7 +45,7 @@ class ClosureTemplateViewTest extends Specification {
 			.closureTemplateConfiguration == closureTemplateConfigurationMock
 	}
 	
-	def 'renderMergedTemplateModel calls render on passed SoyTofu with mapped model'() {
+	def 'renderMergedTemplateModel calls render on passed SoyTofu with mapped model, and filters templateName through NamespacingStrategy'() {
 		given:
 		Map<String, Object> modelTest = [:]
 		SoyMapData soyModel = new SoyMapData()
@@ -52,10 +57,20 @@ class ClosureTemplateViewTest extends Specification {
 		
 		then:
 		1 * soyDataMapperMock.mapObjectMap(modelTest) >> soyModel 
-		1 * soyTofuMock.newRenderer("Test") >> rendererMock
+		1 * namespacingStrategyMock.applyNamespace("Test") >> "newTest"
+		1 * soyTofuMock.newRenderer("newTest") >> rendererMock
 		1 * rendererMock.setData(soyModel) >> rendererMock
 		1 * rendererMock.render() >> "Rendition"
 		1 * responseWriterMock.write("Rendition", _, _)
+	}
+	
+	def 'renderMergedTemplateModel throws exception if templateName has not yet been set'() {
+		when:
+		closureTemplateView.setTemplateName(null)
+		closureTemplateView.renderMergedTemplateModel([:], requestMock, responseMock)
+		
+		then:
+		thrown(IllegalStateException)
 	}
 
 }
