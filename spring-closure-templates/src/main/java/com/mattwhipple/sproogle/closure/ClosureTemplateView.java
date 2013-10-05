@@ -22,7 +22,8 @@ public class ClosureTemplateView extends AbstractTemplateView {
 	protected void renderMergedTemplateModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 		SoyMapData soyModel = this.closureTemplateConfiguration.getSoyDataMapper().mapObjectMap(model);
-		String rendition = this.soyTofu.render(templateName, soyModel, null);
+		String rendition = this.soyTofu.newRenderer(templateName)
+				.setData(soyModel).render();
 		response.getWriter().write(rendition);
 	}
 	
