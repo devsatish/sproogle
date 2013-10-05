@@ -1,0 +1,5 @@
+dependencies {
+	compile 'com.google.template:soy:2012-12-21'
+	compile 'org.springframework:spring-webmvc:3.2.4.RELEASE'
+	compile 'javax.servlet:servlet-api:2.5'
+}
