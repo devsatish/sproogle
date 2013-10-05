@@ -1,22 +1,24 @@
-package com.mattwhipple.sproogle.closure.config;
+package com.mattwhipple.sproogle.closure.config.impl;
 
+import com.mattwhipple.sproogle.closure.config.AbstractSoyDataMapper;
 import com.mattwhipple.sproogle.closure.config.SoyDataMapper
-import com.mattwhipple.sproogle.closure.config.ClosureTemplateConfiguration.BasicSoyDataMapper
+import com.mattwhipple.sproogle.closure.config.impl.ClosureTemplateConfigurationImpl.BasicSoyDataMapper
+
 import spock.lang.Specification
 
-class ClosureTemplateConfigurationTest extends Specification {
+class ClosureTemplateConfigurationImplTest extends Specification {
 
 	def 'provides SoyDataMapper'() {
 		given:
 		SoyDataMapper soyDataMapperMock = Mock()
 		
 		expect:
-		new ClosureTemplateConfiguration(soyDataMapper: soyDataMapperMock).soyDataMapper == soyDataMapperMock
+		new ClosureTemplateConfigurationImpl(soyDataMapper: soyDataMapperMock).soyDataMapper == soyDataMapperMock
 	}	
 	
 	def 'throws exception if SoyDataMapper is null'() {
 		when:
-		new ClosureTemplateConfiguration(soyDataMapper:null)
+		new ClosureTemplateConfigurationImpl(soyDataMapper:null)
 		
 		then:
 		thrown(IllegalArgumentException)
@@ -24,7 +26,7 @@ class ClosureTemplateConfigurationTest extends Specification {
 	
 	def 'BasicSoyDataMapper is default and calls standard SoyData static methods'() {
 		when:
-		SoyDataMapper soyDataMapper = new ClosureTemplateConfiguration().getSoyDataMapper()
+		SoyDataMapper soyDataMapper = new ClosureTemplateConfigurationImpl().getSoyDataMapper()
 		
 		then:
 		soyDataMapper instanceof BasicSoyDataMapper
