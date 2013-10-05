@@ -10,7 +10,6 @@ import org.springframework.web.servlet.view.AbstractTemplateView;
 import com.google.template.soy.data.SoyMapData;
 import com.google.template.soy.tofu.SoyTofu;
 import com.mattwhipple.sproogle.closure.config.ClosureTemplateConfiguration;
-import com.mattwhipple.sproogle.closure.config.SoyDataMapper;
 
 public class ClosureTemplateView extends AbstractTemplateView {
 	

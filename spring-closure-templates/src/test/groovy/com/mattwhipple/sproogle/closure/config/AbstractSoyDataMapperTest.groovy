@@ -8,7 +8,7 @@ import com.google.template.soy.data.SoyMapData
 import spock.lang.Specification
 
 class AbstractSoyDataMapperTest extends Specification {
-
+	SoyDataMapper soyDataMapperMock = Mock()
 	
 	def 'mapObjectMap passes all non null objeccts to mapObject and adds nulls as is (becoming NullData)'() {
 		given:
@@ -17,7 +17,6 @@ class AbstractSoyDataMapperTest extends Specification {
 			key2: null,
 			key3: 3,
 			]
-		SoyDataMapper soyDataMapperMock = Mock()
 		
 		when:
 		SoyMapData returnedMap = new StubSoyDataMapper(soyDataMapperMock).mapObjectMap(map)
@@ -29,7 +28,11 @@ class AbstractSoyDataMapperTest extends Specification {
 		returnedMap.getString('key1') == 'value1'
 		returnedMap.get('key2') instanceof com.google.template.soy.data.restricted.NullData
 		returnedMap.getInteger('key3') == 3
-		
+	}
+	
+	def 'if mapObjectMap is passed null, return Null SoyMapData'() {
+		expect:
+		new StubSoyDataMapper(soyDataMapperMock).mapObjectMap(null).map == [:]
 	}
 	
 	class StubSoyDataMapper extends AbstractSoyDataMapper {
